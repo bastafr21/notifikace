@@ -1,130 +1,93 @@
 import 'package:flutter/material.dart';
+import 'whattodo.dart'; // Import the whattodo.dart file
 
-void main() => runApp(NotificationApp());
+void main() {
+  runApp(MyApp());
+}
 
-class NotificationApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      home: ProfileSetupScreen(),
       debugShowCheckedModeBanner: false,
-      home: NotificationScreen(),
     );
   }
 }
 
-class NotificationScreen extends StatefulWidget {
-  @override
-  _NotificationScreenState createState() => _NotificationScreenState();
-}
-
-class _NotificationScreenState extends State<NotificationScreen> {
-  List<Map<String, String>> notificationsLeft = [
-    {"type": "admin", "message": "Admin ___ zadal pokutu uživateli ___ 200 Kč."},
-    {"type": "info", "message": "Máte nově zadanou pokutu. Přejít k platbě ➡"},
-    {"type": "user", "message": "Uživatel ___ zaplatil pokutu 200 Kč."},
-    {"type": "admin", "message": "Admin ___ zadal pokutu uživateli ___ 200 Kč."},
-  ];
-
-  List<Map<String, String>> notificationsRight = [
-    {"message": "Uživatel ___ zaplatil pokutu 800 Kč za 2x bag a pozdní příchod."},
-    {"message": "Uživatel ___ zaplatil pokutu 200 Kč za pozdní příchod."},
-    {"message": "Uživatel ___ zaplatil pokutu 200 Kč za pozdní příchod."},
-    {"message": "Uživatel ___ zaplatil pokutu 700 Kč za pozdní příchod a 3x sprosté slovo."},
-  ];
-
-  void removeNotification(List<Map<String, String>> notifications, int index) {
-    setState(() {
-      notifications.removeAt(index);
-    });
-  }
-
+class ProfileSetupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Oznámení"),
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          bottom: TabBar(
-            tabs: [
-              Tab(text: "Member"),
-              Tab(text: "Owner"),
-            ],
-            labelColor: Colors.red,
-            unselectedLabelColor: Colors.black,
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+        child: Container(
+          width: 350,
+          decoration: BoxDecoration(
+            color: Colors.white,
           ),
-        ),
-        body: TabBarView(
-          children: [
-            // Left design
-            NotificationList(
-              notifications: notificationsLeft,
-              isDetailed: false,
-              onRemove: (index) => removeNotification(notificationsLeft, index),
-            ),
-            // Right design
-            NotificationList(
-              notifications: notificationsRight,
-              isDetailed: true,
-              onRemove: (index) => removeNotification(notificationsRight, index),
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: ''),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ''),
-          ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10),
+              Text(
+                'Profile Setup',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: 20),
+              ProfileTextField(hintText: 'Name'),
+              ProfileTextField(hintText: 'Surname'),
+              ProfileTextField(hintText: 'Nickname'),
+              ProfileTextField(hintText: 'Add profile picture'),
+              ProfileTextField(hintText: 'Link to your team'),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => WhatToDoScreen()), // Correctly navigate to WhatToDoScreen
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 159),
+                ),
+                child: Text('Save'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class NotificationList extends StatelessWidget {
-  final List<Map<String, String>> notifications;
-  final bool isDetailed;
-  final void Function(int index) onRemove;
+class ProfileTextField extends StatelessWidget {
+  final String hintText;
 
-  const NotificationList({
-    required this.notifications,
-    required this.isDetailed,
-    required this.onRemove,
-  });
+  const ProfileTextField({Key? key, required this.hintText}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: notifications.length,
-      itemBuilder: (context, index) {
-        final notification = notifications[index];
-        return Card(
-          margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          color: Colors.lightBlueAccent,
-          child: ListTile(
-            contentPadding: EdgeInsets.all(16),
-            title: Text(
-              notification["message"]!,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
-            ),
-            trailing: IconButton(
-              icon: Icon(Icons.close, color: Colors.white),
-              onPressed: () => onRemove(index),
-            ),
-            leading: isDetailed
-                ? null
-                : notification["type"] == "info"
-                    ? Icon(Icons.info, color: Colors.white)
-                    : null,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: hintText,
+          contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.white),
           ),
-        );
-      },
+          filled: true,
+          fillColor: const Color.fromARGB(255, 255, 255, 255),
+        ),
+      ),
     );
   }
 }
